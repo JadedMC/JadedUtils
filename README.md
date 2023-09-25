@@ -1,4 +1,4 @@
-JadedUtils
+JadedUtils [![](https://jitpack.io/v/JadedMC/JadedUtils.svg)](https://jitpack.io/#JadedMC/JadedUtils)
 ===========
 
 A collection of commonly used utility methods used throughout the JadedMC Minecraft server.
@@ -27,10 +27,9 @@ Maven
 
 ```xml
 <dependency>
-    <groupID>com.github.JadedMC</groupID>
-    <artifactId>JadedUtils</artifactID>
-    <version>master-SNAPSHOT</version>
-    <scope>compile</scope>
+    <groupId>com.github.JadedMC</groupId>
+    <artifactId>JadedUtils</artifactId>
+    <version>Tag</version>
 </dependency>
 ```
 
@@ -46,6 +45,6 @@ allprojects {
 
 ```kotlin
 dependencies {
-    implementation 'com.github.JadedMC:JadedUtils:master-SNAPSHOT'
+    implementation 'com.github.JadedMC:JadedUtils:Tag'
 }
 ```
