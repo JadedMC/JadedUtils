@@ -125,4 +125,40 @@ public class ChatUtils {
                 .replace("&o", "<i>")
                 .replace("&r", "<reset>");
     }
+
+    /**
+     * Convert a component to its legacy form.
+     * Used because some important plugins don't play nice with MiniMessage.
+     * @param component Component to turn into a legacy string.
+     * @return Resulting legacy string.
+     */
+    public static String toLegacy(Component component) {
+        return MiniMessage.miniMessage().serialize(component).replace("<black>", "§0")
+                .replace("<dark_blue>", "§1")
+                .replace("<dark_green>", "§2")
+                .replace("<dark_aqua>", "§3")
+                .replace("<dark_red>", "§4")
+                .replace("<dark_purple>", "§5")
+                .replace("<gold>", "§6")
+                .replace("<gray>", "§7")
+                .replace("<dark_gray>", "§8")
+                .replace("<blue>", "§9")
+                .replace("<green>", "§a")
+                .replace("<aqua>", "§b")
+                .replace("<red>", "§c")
+                .replace("<light_purple>", "§d")
+                .replace("<yellow>", "§e")
+                .replace("<white>", "§f")
+                .replace("<obfuscated>", "§k")
+                .replace("<obf>", "§k")
+                .replace("<bold>", "§l")
+                .replace("<b>", "§l")
+                .replace("<strikethrough>", "§m")
+                .replace("<st>", "§m")
+                .replace("<underline>", "§n")
+                .replace("<u>", "§n")
+                .replace("<i>", "§o")
+                .replace("<italic>", "§o")
+                .replace("<reset>", "§r");
+    }
 }
