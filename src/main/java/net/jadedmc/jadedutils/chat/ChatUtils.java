@@ -27,6 +27,9 @@ package net.jadedmc.jadedutils.chat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,6 +38,36 @@ import java.util.regex.Pattern;
  * Some methods to make sending chat messages easier.
  */
 public class ChatUtils {
+
+    /**
+     * Broadcast a MiniMessage message to all online players.
+     * @param message Message to broadcast.
+     */
+    public static void broadcast(String message) {
+        for(Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(translate(message));
+        }
+    }
+
+    /**
+     * Broadcast a MiniMessage message to all online players in a given world.
+     * @param world World to broadcast message in.
+     * @param message Message to broadcast.
+     */
+    public static void broadcast(World world, String message) {
+        for(Player player : world.getPlayers()) {
+            player.sendMessage(translate(message));
+        }
+    }
+
+    /**
+     * Send a MiniMessage message to a given CommandSender.
+     * @param commandSender CommandSender to send message to.
+     * @param message Message to send.
+     */
+    public static void chat(CommandSender commandSender, String message) {
+        commandSender.sendMessage(translate(message));
+    }
 
     /**
      * Translates a String to a colorful String using methods in the BungeeCord API.
