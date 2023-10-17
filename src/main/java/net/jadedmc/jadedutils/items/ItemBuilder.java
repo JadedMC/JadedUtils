@@ -39,6 +39,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -146,12 +147,14 @@ public class ItemBuilder {
      */
     public ItemBuilder addLore(final Component line) {
 
-        // Create new lore if it does not exist.
-        if(!this.itemMeta.hasLore()) {
-            this.itemMeta.lore(new ArrayList<>());
+        List<Component> lore = this.itemMeta.lore();
+
+        if(lore == null) {
+            lore = new ArrayList<>();
         }
 
-        Objects.requireNonNull(this.itemMeta.lore()).add(line);
+        lore.add(line);
+        this.itemMeta.lore(lore);
         return this;
     }
 
