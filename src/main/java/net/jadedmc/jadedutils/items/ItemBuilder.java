@@ -147,12 +147,11 @@ public class ItemBuilder {
     public ItemBuilder addLore(final Component line) {
 
         // Create new lore if it does not exist.
-        if(this.itemStack.lore() == null) {
-            this.itemStack.lore(new ArrayList<>());
+        if(!this.itemMeta.hasLore()) {
+            this.itemMeta.lore(new ArrayList<>());
         }
 
-        Objects.requireNonNull(this.itemStack.lore()).add(line);
-
+        Objects.requireNonNull(this.itemMeta.lore()).add(line);
         return this;
     }
 
