@@ -134,7 +134,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder addFlag(final ItemFlag itemFlag) {
-        this.itemStack.addItemFlags(itemFlag);
+        this.itemMeta.addItemFlags(itemFlag);
         return this;
     }
 
