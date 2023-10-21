@@ -26,6 +26,7 @@ package net.jadedmc.jadedutils.items;
 
 import com.cryptomorin.xseries.XMaterial;
 import net.jadedmc.jadedutils.chat.ChatUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -151,7 +152,7 @@ public class ItemBuilder {
             lore = new ArrayList<>();
         }
 
-        lore.add(ChatUtils.toLegacy(str));
+        lore.add(ChatColor.translateAlternateColorCodes('&', ChatUtils.toLegacy(str)));
         this.itemMeta.setLore(lore);
 
         return this;
@@ -193,7 +194,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder setDisplayName(final String displayName) {
-        this.itemMeta.setDisplayName(ChatUtils.toLegacy(displayName));
+        this.itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ChatUtils.toLegacy(displayName)));
         return this;
     }
 
