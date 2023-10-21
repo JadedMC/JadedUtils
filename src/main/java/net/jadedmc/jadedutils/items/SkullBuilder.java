@@ -27,7 +27,7 @@ package net.jadedmc.jadedutils.items;
 import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -46,12 +46,12 @@ public class SkullBuilder {
         int less = (int) id.getLeastSignificantBits();
         int most = (int) id.getMostSignificantBits();
 
-        item = Bukkit.getUnsafe().modifyItemStack(new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial()), "{SkullOwner:{Id:[I;" + (less * most) + "," + (less >> 23) + "," + (most / less) + "," + (most * 8731) + "],Properties:{textures:[{Value:\"" + texture + "\"}]}}}");
+        item = Bukkit.getUnsafe().modifyItemStack(new ItemBuilder(Material.PLAYER_HEAD).build(), "{SkullOwner:{Id:[I;" + (less * most) + "," + (less >> 23) + "," + (most / less) + "," + (most * 8731) + "],Properties:{textures:[{Value:\"" + texture + "\"}]}}}");
         meta = (SkullMeta) item.getItemMeta();
     }
 
-    public SkullBuilder(OfflinePlayer player) {
-        item = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial());
+    public SkullBuilder(Player player) {
+        item = new ItemBuilder(XMaterial.PLAYER_HEAD).build();
         meta = (SkullMeta) item.getItemMeta();
         meta.setOwner(player.getName());
     }
