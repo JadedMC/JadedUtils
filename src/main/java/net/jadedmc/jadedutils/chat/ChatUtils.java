@@ -24,6 +24,7 @@
  */
 package net.jadedmc.jadedutils.chat;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
@@ -38,15 +39,18 @@ import java.util.regex.Pattern;
  * Some methods to make sending chat messages easier.
  */
 public class ChatUtils {
+    private static BukkitAudiences adventure;
+
+    public static void setAdventure(BukkitAudiences adv) {
+        adventure = adv;
+    }
 
     /**
      * Broadcast a MiniMessage message to all online players.
      * @param message Message to broadcast.
      */
     public static void broadcast(String message) {
-        for(Player player : Bukkit.getOnlinePlayers()) {
-            player.sendMessage(translate(message));
-        }
+        adventure.players().sendMessage(translate(message));
     }
 
     /**
@@ -56,7 +60,7 @@ public class ChatUtils {
      */
     public static void broadcast(World world, String message) {
         for(Player player : world.getPlayers()) {
-            player.sendMessage(translate(message));
+            adventure.player(player).sendMessage(translate(message));
         }
     }
 
@@ -66,7 +70,7 @@ public class ChatUtils {
      * @param message Message to send.
      */
     public static void chat(CommandSender commandSender, String message) {
-        commandSender.sendMessage(translate(message));
+        adventure.sender(commandSender).sendMessage(translate(message));
     }
 
     /**

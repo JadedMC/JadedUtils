@@ -26,7 +26,6 @@ package net.jadedmc.jadedutils.items;
 
 import com.cryptomorin.xseries.XMaterial;
 import net.jadedmc.jadedutils.chat.ChatUtils;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
@@ -40,7 +39,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Makes ItemStacks easier to create.
@@ -141,31 +139,21 @@ public class ItemBuilder {
     }
 
     /**
-     * Adds a Component to the item lore.
-     * @param line Component to add to the lore.
+     * Adds a String to the item lore.
+     * Supports MiniMessage formatting.
+     * @param str String to add to the lore.
      * @return ItemBuilder.
      */
-    public ItemBuilder addLore(final Component line) {
-
-        List<Component> lore = this.itemMeta.lore();
+    public ItemBuilder addLore(String str) {
+        List<String> lore = this.itemMeta.getLore();
 
         if(lore == null) {
             lore = new ArrayList<>();
         }
 
-        lore.add(line);
-        this.itemMeta.lore(lore);
-        return this;
-    }
+        lore.add(ChatUtils.toLegacy(str));
+        this.itemMeta.setLore(lore);
 
-    /**
-     * Adds a String to the item lore.
-     * Supports MiniMessage formatting.
-     * @param line String to add to the lore.
-     * @return ItemBuilder.
-     */
-    public ItemBuilder addLore(final String line) {
-        this.addLore(ChatUtils.translate(line));
         return this;
     }
 
@@ -199,23 +187,13 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the item display name with a Component.
-     * @param displayName Component for the display name.
-     * @return ItemBuilder.
-     */
-    public ItemBuilder setDisplayName(final Component displayName) {
-        this.itemMeta.displayName(displayName);
-        return this;
-    }
-
-    /**
      * Sets the item display name with a String.
      * Supports MiniMessage formatting.
      * @param displayName String to set display name to.
      * @return ItemBuilder.
      */
     public ItemBuilder setDisplayName(final String displayName) {
-        this.setDisplayName(ChatUtils.translate(displayName));
+        this.itemMeta.setDisplayName(ChatUtils.toLegacy(displayName));
         return this;
     }
 
