@@ -53,7 +53,7 @@ public class SkullBuilder {
     public SkullBuilder(OfflinePlayer player) {
         item = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial());
         meta = (SkullMeta) item.getItemMeta();
-        meta.setOwningPlayer(player);
+        meta.setOwner(player.getName());
     }
 
     public ItemBuilder asItemBuilder() {
