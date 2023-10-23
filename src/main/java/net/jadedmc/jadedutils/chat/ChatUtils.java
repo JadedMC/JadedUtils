@@ -26,6 +26,7 @@ package net.jadedmc.jadedutils.chat;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -37,6 +38,52 @@ import java.util.regex.Pattern;
  * Some methods to make sending chat messages easier.
  */
 public class ChatUtils {
+    private final static int CENTER_PX = 154;
+
+    /**
+     * Attempts to center a message in chat.
+     * @param message Message to center.
+     * @return Centered message.
+     */
+    public static String centerText(String message) {
+
+        if(message.equals("")) {
+            return message;
+        }
+
+         String translated = ChatColor.translateAlternateColorCodes('&', MiniMessage.miniMessage().stripTags(toLegacy(message)));
+
+        int messagePxSize = 0;
+        boolean previousCode = false;
+        boolean isBold = false;
+
+        for(char c : translated.toCharArray()) {
+            if(c == '§') {
+                previousCode = true;
+            }
+            else if(previousCode) {
+                previousCode = false;
+                isBold = c == 'l' || c == 'L';
+            }
+            else {
+                DefaultFontInfo dFI = DefaultFontInfo.getDefaultFontInfo(c);
+                messagePxSize += isBold ? dFI.getBoldLength() : dFI.getLength();
+                messagePxSize++;
+            }
+        }
+
+        int halvedMessageSize = messagePxSize / 2;
+        int toCompensate = CENTER_PX - halvedMessageSize;
+        int spaceLength = DefaultFontInfo.SPACE.getLength() + 1;
+        int compensated = 0;
+        StringBuilder sb = new StringBuilder();
+        while(compensated < toCompensate) {
+            sb.append(" ");
+            compensated += spaceLength;
+        }
+
+        return sb + message;
+    }
 
     /**
      * Broadcast a MiniMessage message to all online players.
