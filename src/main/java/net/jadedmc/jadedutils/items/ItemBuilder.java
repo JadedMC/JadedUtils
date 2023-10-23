@@ -194,7 +194,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder setDisplayName(final String displayName) {
-        this.itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', ChatUtils.toLegacy(displayName)));
+        this.itemMeta.displayName(ChatUtils.translate(displayName));
         return this;
     }
 
