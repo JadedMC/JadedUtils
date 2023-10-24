@@ -26,6 +26,7 @@ package net.jadedmc.jadedutils.items;
 
 import com.cryptomorin.xseries.XMaterial;
 import net.jadedmc.jadedutils.chat.ChatUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -146,14 +147,14 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder addLore(String str) {
-        List<String> lore = this.itemMeta.getLore();
+        List<Component> lore = this.itemMeta.lore();
 
         if(lore == null) {
             lore = new ArrayList<>();
         }
 
-        lore.add(ChatColor.translateAlternateColorCodes('&', ChatUtils.toLegacy(str)));
-        this.itemMeta.setLore(lore);
+        lore.add(ChatUtils.translate("<!i>" + str));
+        this.itemMeta.lore(lore);
 
         return this;
     }
@@ -194,7 +195,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder setDisplayName(final String displayName) {
-        this.itemMeta.displayName(ChatUtils.translate(displayName));
+        this.itemMeta.displayName(ChatUtils.translate("<!i>" + displayName));
         return this;
     }
 
