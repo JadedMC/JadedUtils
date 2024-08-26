@@ -24,13 +24,20 @@
  */
 package net.jadedmc.jadedutils.chat;
 
+import com.google.common.collect.Iterables;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.jadedmc.jadedutils.VersionUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,7 +58,7 @@ public class ChatUtils {
             return message;
         }
 
-         String translated = ChatColor.translateAlternateColorCodes('&', MiniMessage.miniMessage().stripTags(toLegacy(message)));
+        String translated = ChatColor.translateAlternateColorCodes('&', MiniMessage.miniMessage().stripTags(toLegacy(message)));
 
         int messagePxSize = 0;
         boolean previousCode = false;
@@ -112,12 +119,69 @@ public class ChatUtils {
     }
 
     /**
+     * Send a MiniMessage message to a given player, from their UUID.
+     * @param playerUUID Player to send message to.
+     * @param message Message to send.
+     */
+    public static void chat(@NotNull final UUID playerUUID, @NotNull final String message) {
+        final Player player = Bukkit.getPlayer(playerUUID);
+
+        // Make sure the player is online.
+        if(player == null) {
+            return;
+        }
+
+        // Send the message.
+        chat(player, message);
+    }
+
+    /**
+     * Send a MiniMessage message to a group of players, based of their ids.
+     * @param playerUUIDs UUIDs of players to send messages to.
+     * @param message Message to send.
+     */
+    public static void chat(@NotNull final Collection<UUID> playerUUIDs, @NotNull final String message) {
+        playerUUIDs.forEach(uuid -> chat(uuid, message));
+    }
+
+    /**
      * Translates a String to a colorful String using methods in the BungeeCord API.
      * @param message Message to translate.
      * @return Translated Message.
      */
     public static Component translate(String message) {
+
+        // Checks for the "<center>" tag, which centers a message.
+        if(message.startsWith("<center>")) {
+            message = centerText(message.replaceFirst("<center>", ""));
+        }
+
         return MiniMessage.miniMessage().deserialize(replaceLegacy(message));
+    }
+
+    /**
+     * Parse placeholders using the first person online.
+     * @param message Message to parse.
+     * @return Parsed string.
+     */
+    public static String parsePlaceholders(String message) {
+
+        // Makes sure there are players online.
+        if(Bukkit.getOnlinePlayers().size() == 0) {
+            return message;
+        }
+
+        return parsePlaceholders(Iterables.getFirst(Bukkit.getOnlinePlayers(), null), message);
+    }
+
+    /**
+     * Replace placeholders in a message for a player.
+     * @param player Player to replace placeholders for.
+     * @param message Message to replace them in.
+     * @return Parsed string.
+     */
+    public static String parsePlaceholders(Player player, String message) {
+        return PlaceholderAPI.setPlaceholders(player, message);
     }
 
     /**
@@ -126,12 +190,9 @@ public class ChatUtils {
      * @return Message with the color codes replaced.
      */
     public static String replaceLegacy(String message) {
-        // Get the server version.
-        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
-        int subVersion = Integer.parseInt(version.replace("1_", "").replaceAll("_R\\d", "").replace("v", ""));
 
         // If the version is 1.16 or greater, check for hex color codes.
-        if(subVersion >= 16) {
+        if(VersionUtils.getServerVersion() >= 16) {
             Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
             Matcher matcher = pattern.matcher(message);
 
@@ -144,28 +205,28 @@ public class ChatUtils {
 
         // Then replace legacy color codes.
         return message.replace("§", "&")
-                .replace("&0", "<reset><black>")
-                .replace("&1", "<reset><dark_blue>")
-                .replace("&2", "<reset><dark_green>")
-                .replace("&3", "<reset><dark_aqua>")
-                .replace("&4", "<reset><dark_red>")
-                .replace("&5", "<reset><dark_purple>")
-                .replace("&6", "<reset><gold>")
-                .replace("&7", "<reset><gray>")
-                .replace("&8", "<reset><dark_gray>")
-                .replace("&9", "<reset><blue>")
-                .replace("&a", "<reset><green>")
-                .replace("&b", "<reset><aqua>")
-                .replace("&c", "<reset><red>")
-                .replace("&d", "<reset><light_purple>")
-                .replace("&e", "<reset><yellow>")
-                .replace("&f", "<reset><white>")
+                .replace("&0", "<!b><!i><!u><!st><!obf><black>")
+                .replace("&1", "<!b><!i><!u><!st><!obf><dark_blue>")
+                .replace("&2", "<!b><!i><!u><!st><!obf><dark_green>")
+                .replace("&3", "<!b><!i><!u><!st><!obf><dark_aqua>")
+                .replace("&4", "<!b><!i><!u><!st><!obf><dark_red>")
+                .replace("&5", "<!b><!i><!u><!st><!obf><dark_purple>")
+                .replace("&6", "<!b><!i><!u><!st><!obf><gold>")
+                .replace("&7", "<!b><!i><!u><!st><!obf><gray>")
+                .replace("&8", "<!b><!i><!u><!st><!obf><dark_gray>")
+                .replace("&9", "<!b><!i><!u><!st><!obf><blue>")
+                .replace("&a", "<!b><!i><!u><!st><!obf><green>")
+                .replace("&b", "<!b><!i><!u><!st><!obf><aqua>")
+                .replace("&c", "<!b><!i><!u><!st><!obf><red>")
+                .replace("&d", "<!b><!i><!u><!st><!obf><light_purple>")
+                .replace("&e", "<!b><!i><!u><!st><!obf><yellow>")
+                .replace("&f", "<!b><!i><!u><!st><!obf><white>")
                 .replace("&k", "<obfuscated>")
                 .replace("&l", "<bold>")
                 .replace("&m", "<strikethrough>")
                 .replace("&n", "<u>")
                 .replace("&o", "<i>")
-                .replace("&r", "<reset>");
+                .replace("&r", "<!b><!i><!u><!st><!obf><white>");
     }
 
     /**
