@@ -27,17 +27,20 @@ package net.jadedmc.jadedutils.items;
 import com.cryptomorin.xseries.XMaterial;
 import net.jadedmc.jadedutils.chat.ChatUtils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemRarity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.components.FoodComponent;
+import org.bukkit.inventory.meta.components.JukeboxPlayableComponent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +57,7 @@ public class ItemBuilder {
      * Creates an item builder using a base ItemStack.
      * @param itemStack Starting ItemStack.
      */
-    public ItemBuilder(final ItemStack itemStack) {
+    public ItemBuilder(@NotNull final ItemStack itemStack) {
         this.itemStack = itemStack;
         this.itemMeta = itemStack.getItemMeta();
     }
@@ -64,7 +67,7 @@ public class ItemBuilder {
      * @param material Material to use.
      * @param amount Number of items.
      */
-    public ItemBuilder(Material material, final int amount) {
+    public ItemBuilder(final Material material, final int amount) {
         this(new ItemStack(material, amount));
     }
 
@@ -83,8 +86,8 @@ public class ItemBuilder {
      */
     public ItemBuilder(final XMaterial xMaterial, final int amount) {
         this.itemStack = xMaterial.parseItem();
-        itemStack.setAmount(amount);
-        this.itemMeta = itemStack.getItemMeta();
+        this.itemStack.setAmount(amount);
+        this.itemMeta = this.itemStack.getItemMeta();
     }
 
     /**
@@ -106,7 +109,6 @@ public class ItemBuilder {
         return this;
     }
 
-
     /**
      * Adds an enchantment to the item.
      * @param enchantment Enchantment to add.
@@ -115,7 +117,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder addEnchantment(final Enchantment enchantment, final int level, final boolean ignore) {
-        itemMeta.addEnchant(enchantment, level, ignore);
+        this.itemMeta.addEnchant(enchantment, level, ignore);
         return this;
     }
 
@@ -126,8 +128,7 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder addEnchantment(final Enchantment enchantment, int level) {
-        this.addEnchantment(enchantment, level, true);
-        return this;
+        return this.addEnchantment(enchantment, level, true);
     }
 
     /**
@@ -136,27 +137,40 @@ public class ItemBuilder {
      * @return ItemBuilder.
      */
     public ItemBuilder addFlag(final ItemFlag itemFlag) {
-        this.itemMeta.addItemFlags(itemFlag);
+        this.itemStack.addItemFlags(itemFlag);
         return this;
     }
 
     /**
-     * Adds a String to the item lore.
-     * Supports MiniMessage formatting.
-     * @param str String to add to the lore.
+     * Add multiple ItemFlags to the item.
+     * @param itemFlags ItemFlags to add.
      * @return ItemBuilder.
      */
-    public ItemBuilder addLore(String str) {
-        List<Component> lore = this.itemMeta.lore();
-
-        if(lore == null) {
-            lore = new ArrayList<>();
-        }
-
-        lore.add(ChatUtils.translate("<!i>" + str));
-        this.itemMeta.lore(lore);
-
+    public ItemBuilder addFlags(final ItemFlag... itemFlags) {
+        this.itemStack.addItemFlags(itemFlags);
         return this;
+    }
+
+    /**
+     * Adds a line to the lore of the item.
+     * @param component Adventure Component to add to the lore.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder addLore(@NotNull final Component component) {
+        final List<Component> lore = new ArrayList<>(this.itemMeta.lore());
+        lore.add(component);
+        this.itemMeta.lore(lore);
+        return this;
+    }
+
+    /**
+     * Adds a line to the lore of the item.
+     * Automatically translates with MiniMessage and legacy text to a component.
+     * @param string String to add to the lore.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder addLore(@NotNull final String string) {
+        return addLore(ChatUtils.translate(string));
     }
 
     /**
@@ -164,8 +178,8 @@ public class ItemBuilder {
      * @return Built ItemStack.
      */
     public ItemStack build() {
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
+        this.itemStack.setItemMeta(this.itemMeta);
+        return this.itemStack;
     }
 
     /**
@@ -189,13 +203,42 @@ public class ItemBuilder {
     }
 
     /**
-     * Sets the item display name with a String.
-     * Supports MiniMessage formatting.
-     * @param displayName String to set display name to.
+     * Sets the item display name with a Component.
+     * @param displayName Component to use for the display name.
      * @return ItemBuilder.
      */
-    public ItemBuilder setDisplayName(final String displayName) {
-        this.itemMeta.displayName(ChatUtils.translate("<!i>" + displayName));
+    public ItemBuilder setDisplayName(@NotNull final Component displayName) {
+        this.itemMeta.displayName(displayName);
+        return this;
+    }
+
+    /**
+     * Sets the item display name with a String.
+     * Gets translated to a Component with MiniMessage and legacy formatting codes.
+     * @param displayName String to use for the display name.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setDisplayName(@NotNull final String displayName) {
+        return this.setDisplayName(ChatUtils.translate(displayName));
+    }
+
+    /**
+     * Set if the item should be resistant to fire.
+     * @param fireResistant true if fire-resistant, false if not.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setFireResistant(final boolean fireResistant) {
+        this.itemMeta.setFireResistant(fireResistant);
+        return this;
+    }
+
+    /**
+     * Set the food component of the Item.
+     * @param foodComponent FoodComponent.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setFood(@NotNull final FoodComponent foodComponent) {
+        this.itemMeta.setFood(foodComponent);
         return this;
     }
 
@@ -205,19 +248,39 @@ public class ItemBuilder {
      * @param itemStack New ItemStack to use.
      * @return ItemBuilder.
      */
-    public ItemBuilder setItem(final ItemStack itemStack) {
+    public ItemBuilder setItemStack(@NotNull final ItemStack itemStack) {
         this.itemStack = itemStack;
-        this.itemMeta = itemStack.getItemMeta();
         return this;
     }
 
     /**
-     * Replaces the material being used in the builder.
-     * @param material New material.
+     * Replaces the ItemMeta being used in the builder.
+     * Probably doing something wrong if you are using this.
+     * @param itemMeta New ItemMeta to use.
      * @return ItemBuilder.
      */
-    public ItemBuilder setMaterial(final Material material) {
-        this.itemStack.setType(material);
+    public ItemBuilder setItemMeta(@NotNull final ItemMeta itemMeta) {
+        this.itemMeta = itemMeta;
+        return this;
+    }
+
+    /**
+     * Set the JukeboxPlayableComponent of the item.
+     * @param jukeboxPlayableComponent JukeboxPlayableComponent.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setJukeboxPlayable(@NotNull final JukeboxPlayableComponent jukeboxPlayableComponent) {
+        this.itemMeta.setJukeboxPlayable(jukeboxPlayableComponent);
+        return this;
+    }
+
+    /**
+     * Sets the max stack size of the item.
+     * @param maxStackSize Maximum size of the stack.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setMaxStackSize(final int maxStackSize) {
+        this.itemMeta.setMaxStackSize(maxStackSize);
         return this;
     }
 
@@ -228,10 +291,9 @@ public class ItemBuilder {
      * @param value value for the data.
      * @return ItemBuilder.
      */
-    public ItemBuilder setPersistentData(final Plugin plugin, final String key, final String value) {
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, key);
+    public ItemBuilder setPersistentData(@NotNull final Plugin plugin, final String key, final String value) {
+        final NamespacedKey namespacedKey = new NamespacedKey(plugin, key);
         this.itemMeta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, value);
-
         return this;
     }
 
@@ -242,10 +304,19 @@ public class ItemBuilder {
      * @param value value for the data.
      * @return ItemBuilder.
      */
-    public ItemBuilder setPersistentData(final Plugin plugin, final String key, final int value) {
-        NamespacedKey namespacedKey = new NamespacedKey(plugin, key);
+    public ItemBuilder setPersistentData(@NotNull final Plugin plugin, final String key, final int value) {
+        final NamespacedKey namespacedKey = new NamespacedKey(plugin, key);
         this.itemMeta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.INTEGER, value);
+        return this;
+    }
 
+    /**
+     * Sets the rarity of the item.
+     * @param itemRarity New Item Rarity.
+     * @return ItemBuilder.
+     */
+    public ItemBuilder setRarity(final ItemRarity itemRarity) {
+        this.itemMeta.setRarity(itemRarity);
         return this;
     }
 
